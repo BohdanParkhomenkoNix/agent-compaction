@@ -1,0 +1,22 @@
+{
+  "name": "agent-compaction",
+  "version": "0.1.0",
+  "description": "One compaction policy for every coding agent: Claude Code's threshold and skill restore, with an adapter per agent.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@opencode/plugin": "2.0.29",
+    "@opencode/schema": "2.0.29",
+    "effect": "4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  }
+}
