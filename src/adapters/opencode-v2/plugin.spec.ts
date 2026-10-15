@@ -1,9 +1,19 @@
+import { mkdtempSync, readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { Effect } from 'effect'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { HEADER } from '../../core/skills.ts'
 import { callHook, fakeContext, type FakeOptions } from './fake-context.ts'
 import { inputLimitFor } from './limits.ts'
 import { activate, optionsOf } from './plugin.ts'
+
+let logDir = ''
+
+beforeEach(() => {
+  logDir = mkdtempSync(join(tmpdir(), 'agent-compaction-'))
+  process.env.AGENT_COMPACTION_LOG_DIR = logDir
+})
 
 async function activated(opts: FakeOptions) {
   const fake = fakeContext(opts)
@@ -66,5 +76,6 @@ describe('activate', () => {
     const event = request('s1')
     await callHook(fake, 'session.context', event)
     expect(event.system).toEqual([])
+    expect(readFileSync(join(logDir, 'opencode.log'), 'utf8')).toContain('context s1')
   })
 })
