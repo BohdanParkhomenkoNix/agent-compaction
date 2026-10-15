@@ -18,13 +18,18 @@ export type Ctx = Pick<Plugin.Context, 'options' | 'session' | 'storage' | 'tool
 
 export const OPENCODE_CAPABILITIES: Capabilities = { nativeThreshold: false, nativeSkillRestore: false }
 
-const LOG_DIR = join(homedir(), '.cache', 'agent-compaction')
+// Read on every call: tests point it at a temporary directory so they never write
+// into the log the live checks read.
+function logDir(): string {
+  return process.env.AGENT_COMPACTION_LOG_DIR || join(homedir(), '.cache', 'agent-compaction')
+}
 
 export function log(text: string): void {
   console.error(`[agent-compaction] ${text}`)
   try {
-    mkdirSync(LOG_DIR, { recursive: true })
-    appendFileSync(join(LOG_DIR, 'opencode.log'), `${new Date().toISOString()} ${text}\n`)
+    const dir = logDir()
+    mkdirSync(dir, { recursive: true })
+    appendFileSync(join(dir, 'opencode.log'), `${new Date().toISOString()} ${text}\n`)
   } catch {
     // The console line above is enough when the cache directory is not writable.
   }
